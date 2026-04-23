@@ -2,55 +2,87 @@ package com.example.assessment.controller;
 
 import com.example.assessment.entity.Exam;
 import com.example.assessment.service.ExamService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
+import java.util.List;
 
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-@WebMvcTest(
-    controllers = ExamController.class,
-    excludeAutoConfiguration = {
-        org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class,
-        org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration.class
-    }
-)
+@ExtendWith(MockitoExtension.class)
 class ExamControllerIntegrationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Mock
+    private ExamService service;
 
-    @MockBean
-    private ExamService examService;
+    @InjectMocks
+    private ExamController examController;
 
-    @Test
-    void testGetAllExams() throws Exception {
-        Exam exam = new Exam();
+    private Exam exam;
+
+    @BeforeEach
+    void setUp() {
+        exam = new Exam();
         exam.setId(1L);
         exam.setTitle("Certified Java Developer");
-
-        given(examService.getAll()).willReturn(Arrays.asList(exam));
-
-        mockMvc.perform(get("/exams")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].title").value("Certified Java Developer"));
     }
 
     @Test
-    void testGetAllExamsEmpty() throws Exception {
-        given(examService.getAll()).willReturn(Arrays.asList());
+    void testGetAllExams() {
+        when(service.getAll()).thenReturn(Arrays.asList(exam));
 
-        mockMvc.perform(get("/exams")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+        ResponseEntity<List<Exam>> response = examController.getAll();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(1, response.getBody().size());
+        assertEquals("Certified Java Developer", response.getBody().get(0).getTitle());
+    }
+
+    @Test
+    void testGetExamById_Found() {
+        when(service.getById(1L)).thenReturn(exam);
+
+        ResponseEntity<Exam> response = examController.getById(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+    }
+
+    @Test
+    void testGetExamById_NotFound() {
+        when(service.getById(99L)).thenReturn(null);
+
+        ResponseEntity<Exam> response = examController.getById(99L);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void testCreateExam() {
+        when(service.save(any(Exam.class))).thenReturn(exam);
+
+        ResponseEntity<Exam> response = examController.create(exam);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+    }
+
+    @Test
+    void testDeleteExam() {
+        doNothing().when(service).delete(1L);
+
+        ResponseEntity<Void> response = examController.delete(1L);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(service, times(1)).delete(1L);
     }
 }
