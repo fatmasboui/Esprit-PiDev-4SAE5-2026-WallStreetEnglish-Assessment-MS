@@ -1,12 +1,10 @@
-// AnswerRequestDTO.java
 package com.example.assessment.dto;
 
 public class AnswerRequestDto {
     private String content;
     private boolean correct;
-    private Long questionId;  // Juste l'ID, pas l'objet Question
+    private Long questionId;
 
-    // Getters and setters
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
 
