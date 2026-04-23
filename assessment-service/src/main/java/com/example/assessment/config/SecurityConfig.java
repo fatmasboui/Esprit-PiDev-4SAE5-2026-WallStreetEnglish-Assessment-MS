@@ -13,16 +13,18 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    private static final String ADMIN = "ADMIN";
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/answers/**").hasAnyRole("USER", "ADMIN")
-                .requestMatchers("/api/v1/attempts/**").hasAnyRole("USER", "ADMIN")
-                .requestMatchers("/api/v1/exams/**").hasRole("ADMIN")
-                .requestMatchers("/api/v1/questions/**").hasRole("ADMIN")
+                .requestMatchers("/api/v1/answers/**").hasAnyRole("USER", ADMIN)
+                .requestMatchers("/api/v1/attempts/**").hasAnyRole("USER", ADMIN)
+                .requestMatchers("/api/v1/exams/**").hasRole(ADMIN)
+                .requestMatchers("/api/v1/questions/**").hasRole(ADMIN)
                 .anyRequest().authenticated()
             );
         
