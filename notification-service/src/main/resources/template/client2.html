@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Client 2 Notifications</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+</head>
+<body>
+<h1>Client 2 - Notifications</h1>
+
+<div id="notifications"></div>
+
+<script>
+    let stompClient = null;
+
+    function connect() {
+        const socket = new SockJS('http://localhost:8083/ws');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function(frame) {
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/notifications', function(message) {
+                showNotification(message.body);
+            });
+        }, function(error) {
+            console.error('WebSocket connection error: ' + error);
+        });
+    }
+
+    function showNotification(message) {
+        const notifications = document.getElementById('notifications');
+        const p = document.createElement('p');
+        p.textContent = message;
+        notifications.appendChild(p);
+    }
+
+    connect();
+</script>
+</body>
+</html>

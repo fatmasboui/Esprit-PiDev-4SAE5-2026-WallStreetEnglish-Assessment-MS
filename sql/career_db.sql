@@ -1,0 +1,1 @@
+// career_db.sql - contenu minimal pour le projet

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Notifications</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+</head>
+<body>
+<h1>Admin - Envoyer Notification</h1>
+<input type="text" id="message" placeholder="Entrez votre message">
+<button onclick="sendMessage()">Envoyer</button>
+
+<script>
+    let stompClient = null;
+
+    function connect() {
+        const socket = new SockJS('http://localhost:8083/ws'); // URL WebSocket
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function(frame) {
+            console.log('Connecté: ' + frame);
+            stompClient.subscribe('/topic/notifications', function(message) {
+                console.log("Notification reçue: " + message.body);
+            });
+        }, function(error) {
+            console.error('Erreur WebSocket: ' + error);
+        });
+    }
+
+    function sendMessage() {
+        const message = document.getElementById('message').value;
+        if(stompClient && stompClient.connected) {
+            stompClient.send('/app/sendMessage', {}, message);
+            console.log('Message envoyé: ' + message);
+        } else {
+            console.error('WebSocket non connecté');
+        }
+    }
+
+    connect();
+</script>
+</body>
+</html>
