@@ -22,7 +22,9 @@ public class Question {
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Answer> answers;
 
-    public Question() {}
+    public Question() {
+        // Empty constructor for JPA
+    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

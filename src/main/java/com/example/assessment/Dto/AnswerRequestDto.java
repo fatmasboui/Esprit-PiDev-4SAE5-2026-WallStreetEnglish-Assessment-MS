@@ -1,5 +1,5 @@
 // AnswerRequestDTO.java
-package com.example.assessment.Dto;
+package com.example.assessment.dto;
 
 public class AnswerRequestDto {
     private String content;

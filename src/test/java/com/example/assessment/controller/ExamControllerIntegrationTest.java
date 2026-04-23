@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ExamControllerIntegrationTest {
+class ExamControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -30,7 +30,7 @@ public class ExamControllerIntegrationTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    public void testGetAllExams() throws Exception {
+    void testGetAllExams() throws Exception {
         Exam exam = new Exam();
         exam.setId(1L);
         exam.setTitle("Certified Java Developer");
@@ -44,7 +44,7 @@ public class ExamControllerIntegrationTest {
     }
 
     @Test
-    public void testGetAllExamsUnauthorized() throws Exception {
+    void testGetAllExamsUnauthorized() throws Exception {
         mockMvc.perform(get("/exams")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
