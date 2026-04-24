@@ -1,0 +1,15 @@
+target/
+*.class
+*.jar
+*.exe
+*.dll
+*.so
+*.log
+.git/
+.idea/
+.vscode/
+bin/
+obj/
+*.md
+Jenkinsfile
+docker-compose.yml

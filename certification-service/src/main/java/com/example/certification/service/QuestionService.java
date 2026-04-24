@@ -7,6 +7,8 @@ import com.example.certification.entity.Question;
 import com.example.certification.repository.AnswerRepository;
 import com.example.certification.repository.CertificationExamRepository;
 import com.example.certification.repository.QuestionRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,65 +16,52 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class QuestionService {
 
     private final QuestionRepository questionRepository;
     private final CertificationExamRepository examRepository;
     private final AnswerRepository answerRepository;
 
-    // Injection par constructeur
-    public QuestionService(QuestionRepository questionRepository,
-                           CertificationExamRepository examRepository,
-                           AnswerRepository answerRepository) {
-        this.questionRepository = questionRepository;
-        this.examRepository = examRepository;
-        this.answerRepository = answerRepository;
-    }
-
-    // Récupérer toutes les questions
     public List<Question> getAllQuestions() {
+        log.info("Fetching all questions");
         return questionRepository.findAll();
     }
 
-    // Récupérer une question par ID
     public Question getQuestionById(Long id) {
+        log.info("Fetching question with id: {}", id);
         return questionRepository.findById(id).orElse(null);
     }
 
-    // Créer une nouvelle question (simple)
     public Question saveQuestion(Question question) {
+        log.info("Saving new question");
         return questionRepository.save(question);
     }
 
-    // Mettre à jour une question existante
     public Question updateQuestion(Long id, Question details) {
-        Question question = getQuestionById(id);
-        if (question != null) {
+        log.info("Updating question with id: {}", id);
+        return questionRepository.findById(id).map(question -> {
             question.setContent(details.getContent());
             question.setType(details.getType());
             question.setExam(details.getExam());
             return questionRepository.save(question);
-        }
-        return null;
+        }).orElse(null);
     }
 
-    // Créer une question à partir d'un DTO (avec answers)
     @Transactional
     public Question createQuestionFromRequest(QuestionRequest request) {
-        // 1. Vérifier que l'exam existe
+        log.info("Creating question from request for exam id: {}", request.getExamId());
         CertificationExam exam = examRepository.findById(request.getExamId())
                 .orElseThrow(() -> new RuntimeException("Exam non trouvé avec l'ID: " + request.getExamId()));
 
-        // 2. Créer la question
         Question question = new Question();
         question.setContent(request.getContent());
         question.setType(request.getType());
         question.setExam(exam);
 
-        // 3. Sauvegarder d'abord la question
         Question savedQuestion = questionRepository.save(question);
 
-        // 4. Créer et sauvegarder les réponses si elles existent
         if (request.getAnswers() != null && !request.getAnswers().isEmpty()) {
             List<Answer> answers = request.getAnswers().stream()
                     .map(a -> {
@@ -91,13 +80,12 @@ public class QuestionService {
         return savedQuestion;
     }
 
-    // Supprimer une question par ID
     public void deleteQuestion(Long id) {
+        log.info("Deleting question with id: {}", id);
         questionRepository.deleteById(id);
     }
 
     public Question save(Question question) {
-        // Simple sauvegarde via le repository
         return questionRepository.save(question);
     }
 }

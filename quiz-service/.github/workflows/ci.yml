@@ -29,11 +29,11 @@ jobs:
 
       - name: Build and analyze
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.sonartoken }}
         run: |
-          mvn clean verify sonar:sonar \
-            -Dsonar.projectKey=quiz-service \
+          mvn -X clean verify sonar:sonar \
+            -Dsonar.projectKey=fatmasboui_Esprit-PIDEV-4SAE5-2026-WallStreetEnglish-Quiz-MS \
             -Dsonar.projectName="Quiz Service" \
-            -Dsonar.host.url=$SONAR_HOST_URL \
-            -Dsonar.login=$SONAR_TOKEN
+            -Dsonar.organization=fatmasboui \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.token=$SONAR_TOKEN

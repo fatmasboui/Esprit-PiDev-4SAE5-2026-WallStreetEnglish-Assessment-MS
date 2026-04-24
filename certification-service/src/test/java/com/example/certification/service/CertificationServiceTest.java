@@ -2,6 +2,7 @@ package com.example.certification.service;
 
 import com.example.certification.entity.Certification;
 import com.example.certification.repository.CertificationRepository;
+import com.example.certification.repository.QuestionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,10 +19,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CertificationServiceTest {
+class CertificationServiceTest {
 
     @Mock
-    private CertificationRepository repository;
+    private CertificationRepository certificationRepository;
+
+    @Mock
+    private QuestionRepository questionRepository;
 
     @InjectMocks
     private CertificationService certificationService;
@@ -33,37 +37,72 @@ public class CertificationServiceTest {
         cert = new Certification();
         cert.setId(1L);
         cert.setTitle("AWS Solutions Architect");
-        cert.setProvider("Amazon");
+        cert.setLevel("Advanced");
+        cert.setDescription("AWS certification");
+        cert.setPassingScore(70);
     }
 
     @Test
     void testGetAllCertifications() {
-        when(repository.findAll()).thenReturn(Arrays.asList(cert));
+        when(certificationRepository.findAll()).thenReturn(Arrays.asList(cert));
         List<Certification> results = certificationService.getAllCertifications();
         assertNotNull(results);
         assertEquals(1, results.size());
+        verify(certificationRepository, times(1)).findAll();
     }
 
     @Test
-    void testGetCertificationById() {
-        when(repository.findById(1L)).thenReturn(Optional.of(cert));
+    void testGetCertificationById_Found() {
+        when(certificationRepository.findById(1L)).thenReturn(Optional.of(cert));
         Optional<Certification> result = certificationService.getCertificationById(1L);
         assertTrue(result.isPresent());
         assertEquals("AWS Solutions Architect", result.get().getTitle());
     }
 
     @Test
-    void testSaveCertification() {
-        when(repository.save(any(Certification.class))).thenReturn(cert);
-        Certification result = certificationService.saveCertification(new Certification());
-        assertNotNull(result);
-        assertEquals("Amazon", result.getProvider());
+    void testGetCertificationById_NotFound() {
+        when(certificationRepository.findById(99L)).thenReturn(Optional.empty());
+        Optional<Certification> result = certificationService.getCertificationById(99L);
+        assertFalse(result.isPresent());
     }
 
     @Test
-    void testDeleteCertification() {
-        doNothing().when(repository).deleteById(1L);
-        certificationService.deleteCertification(1L);
-        verify(repository, times(1)).deleteById(1L);
+    void testSaveCertification() {
+        when(certificationRepository.save(any(Certification.class))).thenReturn(cert);
+        Certification result = certificationService.saveCertification(new Certification());
+        assertNotNull(result);
+        assertEquals("AWS Solutions Architect", result.getTitle());
+    }
+
+    @Test
+    void testDeleteCertification_Exists() {
+        when(certificationRepository.existsById(1L)).thenReturn(true);
+        doNothing().when(certificationRepository).deleteById(1L);
+        boolean deleted = certificationService.deleteCertification(1L);
+        assertTrue(deleted);
+        verify(certificationRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void testDeleteCertification_NotExists() {
+        when(certificationRepository.existsById(99L)).thenReturn(false);
+        boolean deleted = certificationService.deleteCertification(99L);
+        assertFalse(deleted);
+        verify(certificationRepository, never()).deleteById(any());
+    }
+
+    @Test
+    void testUpdateCertification_Success() {
+        Certification updated = new Certification();
+        updated.setTitle("Azure Expert");
+        updated.setLevel("Expert");
+        updated.setDescription("Azure certification");
+        updated.setPassingScore(80);
+
+        when(certificationRepository.findById(1L)).thenReturn(Optional.of(cert));
+        when(certificationRepository.save(any(Certification.class))).thenReturn(cert);
+
+        Certification result = certificationService.updateCertification(1L, updated);
+        assertNotNull(result);
     }
 }

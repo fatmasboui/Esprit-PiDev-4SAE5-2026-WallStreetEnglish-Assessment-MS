@@ -1,3 +1,5 @@
+package com.example.assessment.controller;
+
 import com.example.assessment.entity.Exam;
 import com.example.assessment.service.ExamService;
 import lombok.RequiredArgsConstructor;
@@ -49,4 +51,4 @@ public class ExamController {
             return ResponseEntity.notFound().build();
         }
     }
-}
+}

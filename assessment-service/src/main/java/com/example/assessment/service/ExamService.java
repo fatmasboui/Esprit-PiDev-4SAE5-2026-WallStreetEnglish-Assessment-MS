@@ -1,3 +1,5 @@
+package com.example.assessment.service;
+
 import com.example.assessment.entity.Exam;
 import com.example.assessment.repository.ExamRepository;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +58,6 @@ public class ExamService {
         if (examDetails.getQuestions() != null) {
             existingExam.getQuestions().clear();
             existingExam.getQuestions().addAll(examDetails.getQuestions());
-
             for (var question : existingExam.getQuestions()) {
                 question.setExam(existingExam);
             }
@@ -77,4 +78,4 @@ public class ExamService {
 
         return repository.save(existingExam);
     }
-}
+}

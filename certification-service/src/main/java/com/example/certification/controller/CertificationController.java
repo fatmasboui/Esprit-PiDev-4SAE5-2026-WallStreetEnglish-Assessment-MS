@@ -1,3 +1,5 @@
+package com.example.certification.controller;
+
 import com.example.certification.entity.Certification;
 import com.example.certification.entity.Question;
 import com.example.certification.service.CertificationService;
@@ -59,4 +61,4 @@ public class CertificationController {
                 ResponseEntity.noContent().build() :
                 ResponseEntity.notFound().build();
     }
-}
+}

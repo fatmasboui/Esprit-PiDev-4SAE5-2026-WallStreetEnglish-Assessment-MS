@@ -1,58 +1,52 @@
 package com.example.certification.controller;
 
-import org.springframework.web.bind.annotation.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import java.util.List;
-import java.util.Optional;
-
 import com.example.certification.entity.Certificate;
 import com.example.certification.service.CertificateService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/certificates")
+@RequiredArgsConstructor
+@CrossOrigin(origins ="http://localhost:4200")
 public class CertificateController {
 
-    @Autowired
-    private CertificateService service;
+    private final CertificateService service;
 
-    // --- READ ALL ---
     @GetMapping
-    public List<Certificate> getAll() {
-        return service.getAll();
+    public ResponseEntity<List<Certificate>> getAll() {
+        return ResponseEntity.ok(service.getAll());
     }
 
-    // --- READ BY ID ---
     @GetMapping("/{id}")
-    public Optional<Certificate> getById(@PathVariable Long id) {
-        return service.getById(id);
+    public ResponseEntity<Certificate> getById(@PathVariable Long id) {
+        return service.getById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    // --- CREATE ---
     @PostMapping
-    public Certificate create(@RequestBody Certificate c) {
-        return service.save(c);
+    public ResponseEntity<Certificate> create(@RequestBody Certificate c) {
+        return ResponseEntity.ok(service.save(c));
     }
 
-    // --- UPDATE ---
     @PutMapping("/{id}")
-    public Certificate update(@PathVariable Long id, @RequestBody Certificate c) {
-        Optional<Certificate> existing = service.getById(id);
-        if (existing.isPresent()) {
-            Certificate cert = existing.get();
+    public ResponseEntity<Certificate> update(@PathVariable Long id, @RequestBody Certificate c) {
+        return service.getById(id).map(cert -> {
             cert.setUserId(c.getUserId());
             cert.setCertificateName(c.getCertificateName());
             cert.setLevel(c.getLevel());
             cert.setDateIssued(c.getDateIssued() != null ? c.getDateIssued() : cert.getDateIssued());
-            return service.save(cert);
-        } else {
-            throw new RuntimeException("Certificate not found with id " + id);
-        }
+            return ResponseEntity.ok(service.save(cert));
+        }).orElse(ResponseEntity.notFound().build());
     }
 
-    // --- DELETE ---
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
-        return "Certificate deleted with id " + id;
+        return ResponseEntity.noContent().build();
     }
 }

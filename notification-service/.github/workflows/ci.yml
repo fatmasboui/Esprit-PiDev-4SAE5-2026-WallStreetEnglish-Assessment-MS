@@ -1,10 +1,9 @@
-name: Career Service CI
+name: Notification Service CI
 
 on:
   push:
     branches:
       - main
-      - CareerMS
   pull_request:
     branches:
       - main
@@ -29,11 +28,11 @@ jobs:
 
       - name: Build and analyze
         env:
-          SONAR_TOKEN: ${{ secrets.sonartoken }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn clean verify sonar:sonar \
-            -Dsonar.projectKey=fatmasboui_Esprit-PIDEV-4ASAE5-2026-WallStreetEnglish-CareerService-MS \
-            -Dsonar.projectName="Career Service" \
+            -Dsonar.projectKey=notification-service \
+            -Dsonar.projectName="Notification Service" \
             -Dsonar.organization=fatmasboui \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.token=$SONAR_TOKEN
+            -Dsonar.login=$SONAR_TOKEN

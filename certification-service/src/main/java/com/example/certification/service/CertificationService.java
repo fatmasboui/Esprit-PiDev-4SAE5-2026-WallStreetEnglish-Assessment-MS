@@ -1,3 +1,5 @@
+package com.example.certification.service;
+
 import com.example.certification.entity.Certification;
 import com.example.certification.entity.Question;
 import com.example.certification.repository.CertificationRepository;
@@ -17,7 +19,6 @@ public class CertificationService {
     private final CertificationRepository certificationRepository;
     private final QuestionRepository questionRepository;
 
-    // CRUD Certification
     public List<Certification> getAllCertifications() {
         log.info("Fetching all certifications");
         return certificationRepository.findAll();
@@ -57,9 +58,8 @@ public class CertificationService {
         return false;
     }
 
-    // Récupérer toutes les questions liées à une certification via ses examens
     public List<Question> getQuestionsByCertification(Long certificationId) {
         log.info("Fetching questions for certification id: {}", certificationId);
         return questionRepository.findByExam_Certification_Id(certificationId);
     }
-}
+}

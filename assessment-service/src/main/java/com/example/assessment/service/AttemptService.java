@@ -1,3 +1,5 @@
+package com.example.assessment.service;
+
 import com.example.assessment.entity.Attempt;
 import com.example.assessment.repository.AttemptRepository;
 import lombok.RequiredArgsConstructor;
