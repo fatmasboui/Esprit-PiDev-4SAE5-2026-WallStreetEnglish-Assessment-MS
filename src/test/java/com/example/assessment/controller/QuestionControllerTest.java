@@ -44,21 +44,21 @@ public class QuestionControllerTest {
     @Test
     void testGetAll() throws Exception {
         when(service.getAll()).thenReturn(Arrays.asList(question));
-        mockMvc.perform(get("/questions"))
+        mockMvc.perform(get("/api/questions"))
                 .andExpect(status().isOk());
     }
 
     @Test
     void testGetById() throws Exception {
         when(service.getById(1L)).thenReturn(question);
-        mockMvc.perform(get("/questions/1"))
+        mockMvc.perform(get("/api/questions/1"))
                 .andExpect(status().isOk());
     }
 
     @Test
     void testCreate() throws Exception {
         when(service.save(any(Question.class))).thenReturn(question);
-        mockMvc.perform(post("/questions")
+        mockMvc.perform(post("/api/questions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(question)))
                 .andExpect(status().isOk());
