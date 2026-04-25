@@ -34,7 +34,7 @@ public class QuestionServiceTest {
         question = new Question();
         question.setId(1L);
         question.setContent("What is Java?");
-        question.setType(QuestionType.MULTIPLE_CHOICE);
+        question.setType(QuestionType.MCQ);
     }
 
     @Test
