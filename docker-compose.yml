@@ -41,9 +41,11 @@ services:
     networks:
       - wall-street-network
 
+  # =================================================================
+  # MICROSERVICES DEPUIS DOCKER HUB (CI/CD)
+  # =================================================================
   assessment-service:
-    build:
-      context: ./assessment-service
+    image: fatmasboui/assessment-service:latest
     container_name: assessment-service
     ports:
       - "8088:8088"
@@ -52,6 +54,8 @@ services:
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=*
+      - MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED=true
     depends_on:
       mysql:
         condition: service_healthy
@@ -61,8 +65,7 @@ services:
       - wall-street-network
 
   career-service:
-    build:
-      context: ./career-service
+    image: fatmasboui/career-service:latest
     container_name: career-service
     ports:
       - "8082:8082"
@@ -71,6 +74,8 @@ services:
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=*
+      - MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED=true
     depends_on:
       mysql:
         condition: service_healthy
@@ -79,6 +84,29 @@ services:
     networks:
       - wall-street-network
 
+  quiz-service:
+    image: fatmasboui/quiz-service:latest
+    container_name: quiz-service
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/quiz_db?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=*
+      - MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED=true
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - wall-street-network
+
+  # =================================================================
+  # AUTRES SERVICES (Build local)
+  # =================================================================
   certification-service:
     build:
       context: ./certification-service
@@ -90,6 +118,8 @@ services:
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=*
+      - MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED=true
     depends_on:
       mysql:
         condition: service_healthy
@@ -111,22 +141,28 @@ services:
     networks:
       - wall-street-network
 
-  quiz-service:
-    build:
-      context: ./quiz-service
-    container_name: quiz-service
+  # =================================================================
+  # MONITORING (Prometheus & Grafana)
+  # =================================================================
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
     ports:
-      - "8085:8085"
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - wall-street-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/quiz_db?createDatabaseIfNotExist=true
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - GF_SECURITY_ADMIN_PASSWORD=admin
     depends_on:
-      mysql:
-        condition: service_healthy
-      eureka-server:
-        condition: service_started
+      - prometheus
     networks:
       - wall-street-network
 

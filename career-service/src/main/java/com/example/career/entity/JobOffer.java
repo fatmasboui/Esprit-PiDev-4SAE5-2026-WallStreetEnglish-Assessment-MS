@@ -15,12 +15,20 @@ public class JobOffer {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    private Level requiredLevel; // <-- ici on utilise l'enum correctement
+    private Level requiredLevel;
 
     private boolean active;
 
+    private String companyName;
+    private String location;
+    private String contractType;
+    private Double salary;
+    private String status;
+    private String publicationDate;
+    private String expirationDate;
+
     @OneToMany(mappedBy = "jobOffer", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties("jobOffer")
     private List<Application> applications;
 
     public JobOffer() {}
@@ -40,6 +48,27 @@ public class JobOffer {
 
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }
+
+    public String getCompanyName() { return companyName; }
+    public void setCompanyName(String companyName) { this.companyName = companyName; }
+
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
+
+    public String getContractType() { return contractType; }
+    public void setContractType(String contractType) { this.contractType = contractType; }
+
+    public Double getSalary() { return salary; }
+    public void setSalary(Double salary) { this.salary = salary; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public String getPublicationDate() { return publicationDate; }
+    public void setPublicationDate(String publicationDate) { this.publicationDate = publicationDate; }
+
+    public String getExpirationDate() { return expirationDate; }
+    public void setExpirationDate(String expirationDate) { this.expirationDate = expirationDate; }
 
     public List<Application> getApplications() { return applications; }
     public void setApplications(List<Application> applications) { this.applications = applications; }

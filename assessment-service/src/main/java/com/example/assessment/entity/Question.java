@@ -17,6 +17,7 @@ public class Question {
 
     @ManyToOne
     @JoinColumn(name = "exam_id")
+    @com.fasterxml.jackson.annotation.JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY)
     private Exam exam;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)

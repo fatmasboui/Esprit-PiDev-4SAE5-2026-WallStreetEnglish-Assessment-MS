@@ -20,6 +20,8 @@ public class Exam {
     @Enumerated(EnumType.STRING)
     private ExamType examType; // ENUM: EXAM, QUIZ, TEST
 
+    private Integer passingScore = 50; // Seuil de réussite par défaut à 50%
+
     @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Question> questions = new ArrayList<>();
 
@@ -59,6 +61,9 @@ public class Exam {
 
     public ExamType getExamType() { return examType; }
     public void setExamType(ExamType examType) { this.examType = examType; }
+
+    public Integer getPassingScore() { return passingScore; }
+    public void setPassingScore(Integer passingScore) { this.passingScore = passingScore; }
 
     // IMPORTANT : Ne pas remplacer la collection, mais la modifier
     public List<Question> getQuestions() {

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: career-service
+  namespace: assessment-ms
+  labels:
+    app: career-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: career-service
+  template:
+    metadata:
+      labels:
+        app: career-service
+    spec:
+      containers:
+        - name: career-service
+          image: fatmasboui/career-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "dev"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: career-service
+  namespace: assessment-ms
+spec:
+  selector:
+    app: career-service
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30081
+  type: NodePort

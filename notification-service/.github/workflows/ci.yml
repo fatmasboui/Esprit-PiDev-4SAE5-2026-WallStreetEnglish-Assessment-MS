@@ -29,10 +29,4 @@ jobs:
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          mvn clean verify sonar:sonar \
-            -Dsonar.projectKey=notification-service \
-            -Dsonar.projectName="Notification Service" \
-            -Dsonar.organization=fatmasboui \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=$SONAR_TOKEN
+        run: mvn clean verify sonar:sonar -Dsonar.token=$SONAR_TOKEN

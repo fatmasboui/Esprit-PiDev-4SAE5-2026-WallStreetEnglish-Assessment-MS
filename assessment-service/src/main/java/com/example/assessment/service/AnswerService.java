@@ -15,6 +15,9 @@ public class AnswerService {
 
     @Autowired
     private AnswerRepository repository;
+    
+    @Autowired
+    private com.example.assessment.repository.QuestionRepository questionRepository;
 
     public List<Answer> getAll() {
         return repository.findAll();
@@ -26,6 +29,11 @@ public class AnswerService {
     }
 
     public Answer save(Answer answer) {
+        if (answer.getQuestion() != null && answer.getQuestion().getId() != null) {
+            com.example.assessment.entity.Question q = questionRepository.findById(answer.getQuestion().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Question not found"));
+            answer.setQuestion(q);
+        }
         return repository.save(answer);
     }
 

@@ -40,7 +40,32 @@ pipeline {
                         }
                     }
                 }
-                // Ajoutez les autres services si nécessaire
+                stage('Certification Service') {
+                    steps {
+                        dir('certification-service') {
+                            sh 'mvn clean verify sonar:sonar -Dsonar.token=${SONAR_TOKEN}'
+                        }
+                    }
+                }
+                stage('Notification Service') {
+                    steps {
+                        dir('notification-service') {
+                            sh 'mvn clean verify sonar:sonar -Dsonar.token=${SONAR_TOKEN}'
+                        }
+                    }
+                }
+                stage('Infrastructure Services') {
+                    steps {
+                        script {
+                            dir('eureka-server') {
+                                sh 'mvn clean package -DskipTests'
+                            }
+                            dir('api-gateway') {
+                                sh 'mvn clean package -DskipTests'
+                            }
+                        }
+                    }
+                }
             }
         }
 
