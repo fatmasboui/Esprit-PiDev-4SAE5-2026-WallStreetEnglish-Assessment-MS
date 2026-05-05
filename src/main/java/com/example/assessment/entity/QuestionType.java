@@ -2,5 +2,7 @@ package com.example.assessment.entity;
 
 public enum QuestionType {
     MCQ,
-    OPEN
+    OPEN,
+    MULTIPLE_CHOICE,
+    TRUE_FALSE
 }

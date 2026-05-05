@@ -21,11 +21,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/answers/**").hasAnyRole("USER", ADMIN)
-                .requestMatchers("/api/v1/attempts/**").hasAnyRole("USER", ADMIN)
-                .requestMatchers("/api/v1/exams/**").hasRole(ADMIN)
-                .requestMatchers("/api/v1/questions/**").hasRole(ADMIN)
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
             );
         
         // For microservices, we usually use JWT. For now, we enable standard security.

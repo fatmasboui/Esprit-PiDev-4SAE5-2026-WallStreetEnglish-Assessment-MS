@@ -58,5 +58,54 @@ public class AttemptService {
                     return new IllegalArgumentException(ATTEMPT_NOT_FOUND + id);
                 });
     }
+
+    // READ BY USER ID
+    public List<Attempt> getByUserId(Long userId) {
+        log.info("Fetching attempts for user id: {}", userId);
+        return repo.findByUserId(userId);
+    }
+
+    public Attempt submitExam(com.example.assessment.Dto.SubmitExamPayload payload, 
+                              com.example.assessment.repository.ExamRepository examRepo,
+                              com.example.assessment.repository.AnswerRepository answerRepo) {
+        
+        com.example.assessment.entity.Exam exam = examRepo.findById(payload.getExamId())
+                .orElseThrow(() -> new IllegalArgumentException("Exam not found"));
+
+        int totalQuestions = exam.getQuestions().size();
+        if (totalQuestions == 0) totalQuestions = 1; // Prevent div by zero
+
+        int correctAnswersCount = 0;
+
+        for (com.example.assessment.Dto.SubmitAnswerDto sa : payload.getAnswers()) {
+            if (sa.getAnswerId() == null || sa.getAnswerId() == 0) continue;
+            
+            // On cherche la bonne réponse pour la question donnée
+            List<com.example.assessment.entity.Answer> dbAnswers = answerRepo.findByQuestionId(sa.getQuestionId());
+            boolean isCorrect = dbAnswers.stream()
+                .filter(a -> a.getId().equals(sa.getAnswerId()))
+                .map(com.example.assessment.entity.Answer::isCorrect)
+                .findFirst()
+                .orElse(false);
+            
+            if (isCorrect) {
+                correctAnswersCount++;
+            }
+        }
+
+        int score = (correctAnswersCount * 100) / totalQuestions;
+        int passingScore = exam.getPassingScore() != null ? exam.getPassingScore() : 50;
+        boolean passed = score >= passingScore;
+
+        Attempt attempt = new Attempt();
+        attempt.setExam(exam);
+        attempt.setUserId(payload.getUserId());
+        attempt.setStudentName(payload.getStudentName());
+        attempt.setScore(score);
+        attempt.setPassed(passed);
+        attempt.setDate(java.time.LocalDateTime.now());
+
+        return repo.save(attempt);
+    }
 }
 

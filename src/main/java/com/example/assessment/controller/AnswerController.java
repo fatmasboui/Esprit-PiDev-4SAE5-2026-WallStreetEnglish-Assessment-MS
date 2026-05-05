@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/answers")  // Note: sans slash à la fin
+@RequestMapping("/api/answers")
 public class AnswerController {
 
     @Autowired

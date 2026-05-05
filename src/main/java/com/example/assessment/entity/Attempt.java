@@ -12,7 +12,9 @@ public class Attempt {
     private Long id;
 
     private Long userId;          // l'id de l'utilisateur qui a passé l'exam
+    private String studentName;   // nom de l'étudiant
     private int score;            // score obtenu
+    private boolean passed;       // réussi ou non
     private LocalDateTime date = LocalDateTime.now(); // date de l'essai
 
     @ManyToOne
@@ -57,6 +59,22 @@ public class Attempt {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    public boolean isPassed() {
+        return passed;
+    }
+
+    public void setPassed(boolean passed) {
+        this.passed = passed;
+    }
+
+    public String getStudentName() {
+        return studentName;
+    }
+
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
     }
 
     public LocalDateTime getDate() {

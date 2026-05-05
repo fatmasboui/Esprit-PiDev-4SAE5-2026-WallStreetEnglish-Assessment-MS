@@ -14,6 +14,9 @@ public class QuestionService {
     @Autowired
     private QuestionRepository repository;
 
+    @Autowired
+    private com.example.assessment.repository.ExamRepository examRepository;
+
     public Question getById(Long id) {
         Optional<Question> question = repository.findById(id);
         return question.orElse(null);
@@ -24,6 +27,11 @@ public class QuestionService {
     }
 
     public Question save(Question question) {
+        if (question.getExam() != null && question.getExam().getId() != null) {
+            com.example.assessment.entity.Exam exam = examRepository.findById(question.getExam().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Exam not found"));
+            question.setExam(exam);
+        }
         return repository.save(question);
     }
 
