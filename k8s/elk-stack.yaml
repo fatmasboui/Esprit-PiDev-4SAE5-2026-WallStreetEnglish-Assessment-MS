@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: elasticsearch
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.17.10
+        image: elasticsearch:7.17.10
         ports:
         - containerPort: 9200
         - containerPort: 9300
@@ -52,7 +52,7 @@ spec:
     spec:
       containers:
       - name: kibana
-        image: docker.elastic.co/kibana/kibana:7.17.10
+        image: kibana:7.17.10
         ports:
         - containerPort: 5601
         env:
@@ -122,7 +122,7 @@ spec:
     spec:
       containers:
       - name: logstash
-        image: docker.elastic.co/logstash/logstash:7.17.10
+        image: logstash:7.17.10
         ports:
         - containerPort: 5044
         volumeMounts:
