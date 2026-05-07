@@ -78,6 +78,10 @@ public class ApplicationController {
         }
 
         Application saved = service.saveApplication(application, jobOfferId);
+        if (saved == null) {
+            log.error("[POST] /applications - Failed to save application");
+            return ResponseEntity.internalServerError().build();
+        }
         log.info("[POST] /applications - Created application id={}, jobOffer={}", 
                 saved.getId(), 
                 saved.getJobOffer() != null ? saved.getJobOffer().getTitle() : "null");

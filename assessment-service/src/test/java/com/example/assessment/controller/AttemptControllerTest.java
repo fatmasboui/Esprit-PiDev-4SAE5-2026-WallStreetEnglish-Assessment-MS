@@ -1,6 +1,7 @@
 package com.example.assessment.controller;
 
 import com.example.assessment.entity.Attempt;
+import com.example.assessment.repository.ExamRepository;
 import com.example.assessment.service.AttemptService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +30,9 @@ public class AttemptControllerTest {
     @MockBean
     private AttemptService service;
 
+    @MockBean
+    private ExamRepository examRepository;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -44,6 +48,7 @@ public class AttemptControllerTest {
     @Test
     void testGetAll() throws Exception {
         when(service.getAll()).thenReturn(Arrays.asList(attempt));
+
         mockMvc.perform(get("/attempts"))
                 .andExpect(status().isOk());
     }
@@ -51,9 +56,10 @@ public class AttemptControllerTest {
     @Test
     void testCreate() throws Exception {
         when(service.save(any(Attempt.class))).thenReturn(attempt);
+
         mockMvc.perform(post("/attempts")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(attempt)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(attempt)))
                 .andExpect(status().isOk());
     }
 }

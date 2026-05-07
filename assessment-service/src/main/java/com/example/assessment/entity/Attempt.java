@@ -16,6 +16,9 @@ public class Attempt {
     private int score;            // score obtenu
     private boolean passed;       // réussi ou non
     private LocalDateTime date = LocalDateTime.now(); // date de l'essai
+    
+    @Column(name = "ai_recommended_score")
+    private Double aiRecommendedScore; // Score recommandé par l'IA
 
     @ManyToOne
     @JoinColumn(name = "exam_id")
@@ -91,5 +94,13 @@ public class Attempt {
 
     public void setExam(Exam exam) {
         this.exam = exam;
+    }
+
+    public Double getAiRecommendedScore() {
+        return aiRecommendedScore;
+    }
+
+    public void setAiRecommendedScore(Double aiRecommendedScore) {
+        this.aiRecommendedScore = aiRecommendedScore;
     }
 }

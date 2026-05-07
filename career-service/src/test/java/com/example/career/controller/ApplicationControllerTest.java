@@ -59,7 +59,7 @@ public class ApplicationControllerTest {
 
     @Test
     void testCreate() throws Exception {
-        when(service.saveApplication(any(Application.class))).thenReturn(application);
+        when(service.saveApplication(any(Application.class), any())).thenReturn(application);
         mockMvc.perform(post("/applications")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(application)))

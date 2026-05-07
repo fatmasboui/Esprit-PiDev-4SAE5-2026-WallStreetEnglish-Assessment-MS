@@ -7,7 +7,7 @@ pipeline {
 
     environment {
         DOCKER_HUB_USER = 'fatmasboui'
-        SERVICE_NAME = 'quiz-service'
+        SERVICE_NAME = 'certification-service'
         NAMESPACE = 'assessment-ms'
     }
 
@@ -47,7 +47,7 @@ pipeline {
             steps {
                 script {
                     withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE')]) {
-                        sh "kubectl --kubeconfig=\$KUBECONFIG_FILE apply -f quiz-service-k8s.yml -n ${NAMESPACE}"
+                        sh "kubectl --kubeconfig=\$KUBECONFIG_FILE apply -f certification-service-k8s.yml -n ${NAMESPACE}"
                         sh "kubectl --kubeconfig=\$KUBECONFIG_FILE rollout restart deployment/${SERVICE_NAME} -n ${NAMESPACE}"
                         sh "kubectl --kubeconfig=\$KUBECONFIG_FILE rollout status deployment/${SERVICE_NAME} -n ${NAMESPACE} --timeout=120s"
                     }

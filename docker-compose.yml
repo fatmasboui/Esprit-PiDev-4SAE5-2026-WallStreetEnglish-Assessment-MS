@@ -45,7 +45,8 @@ services:
   # MICROSERVICES DEPUIS DOCKER HUB (CI/CD)
   # =================================================================
   assessment-service:
-    image: fatmasboui/assessment-service:latest
+    build:
+      context: ./assessment-service
     container_name: assessment-service
     ports:
       - "8088:8088"
@@ -140,6 +141,7 @@ services:
       - eureka-server
     networks:
       - wall-street-network
+
 
   # =================================================================
   # MONITORING (Prometheus & Grafana)

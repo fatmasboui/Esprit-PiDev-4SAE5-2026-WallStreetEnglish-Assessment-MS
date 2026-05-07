@@ -5,8 +5,11 @@ import com.example.assessment.repository.AttemptRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -15,6 +18,7 @@ public class AttemptService {
 
     private static final String ATTEMPT_NOT_FOUND = "Attempt not found with id: ";
     private final AttemptRepository repo;
+    private final RestTemplate restTemplate;
 
     // CREATE
     public Attempt save(Attempt attempt) {
@@ -105,7 +109,36 @@ public class AttemptService {
         attempt.setPassed(passed);
         attempt.setDate(java.time.LocalDateTime.now());
 
+        // --- APPEL A L'IA ---
+        try {
+            Map<String, Object> aiRequest = new HashMap<>();
+            aiRequest.put("reading", score);
+            aiRequest.put("listening", 70); // Valeurs par défaut à affiner
+            aiRequest.put("speaking", 65);
+            aiRequest.put("speed", 120);
+            aiRequest.put("accuracy", 80);
+            // Essayer d'abord l'adresse depuis Docker vers Windows, puis localhost en secours
+            String aiUrl = "http://host.docker.internal:5000/predict";
+            Map<String, Object> aiResponse = null;
+            try {
+                aiResponse = restTemplate.postForObject(aiUrl, aiRequest, Map.class);
+            } catch (Exception ex) {
+                log.warn("Échec sur host.docker.internal, tentative sur localhost...");
+                aiUrl = "http://localhost:5000/predict";
+                aiResponse = restTemplate.postForObject(aiUrl, aiRequest, Map.class);
+            }
+            
+            if (aiResponse != null && aiResponse.containsKey("recommended_adaptive_score")) {
+                Double recommendedScore = Double.valueOf(aiResponse.get("recommended_adaptive_score").toString());
+                log.info("IA Recommendation Score: " + recommendedScore);
+                attempt.setAiRecommendedScore(recommendedScore);
+            }
+        } catch (Exception e) {
+            log.error("Échec total de l'appel à l'IA : " + e.getMessage());
+        }
+
         return repo.save(attempt);
     }
 }
+
 

@@ -44,21 +44,21 @@ public class AnswerControllerTest {
     @Test
     void testGetAll() throws Exception {
         when(service.getAll()).thenReturn(Arrays.asList(answer));
-        mockMvc.perform(get("/answers"))
+        mockMvc.perform(get("/api/answers"))
                 .andExpect(status().isOk());
     }
 
     @Test
     void testGetById() throws Exception {
         when(service.getById(1L)).thenReturn(answer);
-        mockMvc.perform(get("/answers/1"))
+        mockMvc.perform(get("/api/answers/1"))
                 .andExpect(status().isOk());
     }
 
     @Test
     void testCreate() throws Exception {
         when(service.save(any(Answer.class))).thenReturn(answer);
-        mockMvc.perform(post("/answers")
+        mockMvc.perform(post("/api/answers")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(answer)))
                 .andExpect(status().isOk());
