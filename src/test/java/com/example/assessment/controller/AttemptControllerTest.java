@@ -1,7 +1,7 @@
 package com.example.assessment.controller;
 
 import com.example.assessment.entity.Attempt;
-import com.example.assessment.repository.AnswerRepository;   // ← Add this import
+import com.example.assessment.repository.AnswerRepository;
 import com.example.assessment.repository.ExamRepository;
 import com.example.assessment.service.AttemptService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,7 +35,7 @@ public class AttemptControllerTest {
     private ExamRepository examRepository;
 
     @MockBean
-    private AnswerRepository answerRepository;   // ← ADD THIS LINE
+    private AnswerRepository answerRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
