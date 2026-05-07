@@ -1,24 +1,3 @@
-package com.example.assessment.controller;
-
-import com.example.assessment.entity.Answer;
-import com.example.assessment.service.AnswerService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Arrays;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 @WebMvcTest(AnswerController.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class AnswerControllerTest {
@@ -50,7 +29,7 @@ public class AnswerControllerTest {
 
     @Test
     void testGetById() throws Exception {
-        when(service.getById(1L)).thenReturn(answer);
+        when(service.getById(1L)).thenReturn(answer);   // Make sure service returns Optional or object as per controller
         mockMvc.perform(get("/answers/1"))
                 .andExpect(status().isOk());
     }
@@ -61,6 +40,6 @@ public class AnswerControllerTest {
         mockMvc.perform(post("/answers")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(answer)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk());   // or .isCreated() if you use 201
     }
 }
