@@ -1,6 +1,7 @@
 package com.example.assessment.controller;
 
 import com.example.assessment.entity.Attempt;
+import com.example.assessment.repository.ExamRepository;
 import com.example.assessment.service.AttemptService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +17,9 @@ import java.util.Arrays;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AttemptController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -28,6 +30,9 @@ public class AttemptControllerTest {
 
     @MockBean
     private AttemptService service;
+
+    @MockBean
+    private ExamRepository examRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -43,17 +48,21 @@ public class AttemptControllerTest {
 
     @Test
     void testGetAll() throws Exception {
+
         when(service.getAll()).thenReturn(Arrays.asList(attempt));
+
         mockMvc.perform(get("/attempts"))
                 .andExpect(status().isOk());
     }
 
     @Test
     void testCreate() throws Exception {
+
         when(service.save(any(Attempt.class))).thenReturn(attempt);
+
         mockMvc.perform(post("/attempts")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(attempt)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(attempt)))
                 .andExpect(status().isOk());
     }
 }
